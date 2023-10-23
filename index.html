@@ -1,77 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3D-cube</title>
     <style>
-        body{
+        body {
             background-image: radial-gradient(gray, black);
             width: 100vw;
             height: auto;
         }
-        .container{
-            position:relative;
-            margin:300px auto;
+
+        .container {
+            position: relative;
+            margin: 200px auto;
             width: 300px;
             height: 300px;
             perspective: 600px;
         }
-        .cube{
+
+        .cube {
             width: inherit;
             height: inherit;
             transform-style: preserve-3d;
             transform: rotateY(45deg) rotateX(45deg);
 
         }
-        .element{
-            position:absolute;
+
+        .element {
+            position: absolute;
             width: inherit;
             height: inherit;
             border: 1px solid red;
             box-shadow: 0 0 5px 1px yellow;
             text-align: center;
-            font-size:70px;
-            color:red;
+            font-size: 70px;
+            color: red;
             text-shadow: 2px 2px 5px black;
-            line-height:260px;
+            line-height: 260px;
             backface-visibility: hidden;
         }
-        .front{
+
+        .front {
             transform: translateZ(150px);
             background-color: rgba(0, 255, 255, 0.833);
         }
-        .back{
+
+        .back {
             transform: rotateY(180deg) translateZ(150px);
             background-color: rgba(255, 255, 0, 0.815);
         }
-        .left{
+
+        .left {
             transform: rotateY(-90deg) translateZ(150px);
             background-color: rgba(0, 0, 255, 0.733);
         }
-        .right{
+
+        .right {
             transform: rotateY(90deg) translateZ(150px);
             background-color: rgba(0, 128, 0, 0.695);
         }
-        .top{
+
+        .top {
             transform: rotateX(90deg) translateZ(150px);
             background-color: rgba(255, 0, 0, 0.662);
         }
-        .bottom{
+
+        .bottom {
             transform: rotateX(-90deg) translateZ(150px);
-            background-color:rgba(128, 128, 128, 0.834);
+            background-color: rgba(128, 128, 128, 0.834);
         }
-        .info{
+
+        .info {
             color: yellow;
             text-align: center;
         }
     </style>
 </head>
+
 <body>
-      <div class="info">
+    <div class="info">
         <p>Keyboard control (right, left, down, up)</p>
-      </div>
-      <div class="container">
+    </div>
+    <div class="container">
         <div class="cube">
             <div class="element front">Front</div>
             <div class="element back">Back</div>
@@ -80,23 +92,53 @@
             <div class="element top">Top</div>
             <div class="element bottom">Bottom</div>
         </div>
-      </div>
-      <script>
-        
-        (function (){
-            var rotateY = 0,
-                rotateX = 0;
-            document.onkeydown = function(e){
-                     if(e.keyCode === 37) rotateY -= 4
-                else if(e.keyCode === 38) rotateX += 4
-                else if(e.keyCode === 39) rotateY += 4
-                else if(e.keyCode === 40) rotateX -= 4
+    </div>
+    <script>
 
-                document.querySelector('.cube').style.transform = 
-                'rotateY('+ rotateY + 'deg)'+
-                'rotateX('+ rotateX + 'deg)';
+        let rotateY = 0;
+        let rotateX = 0;
+
+        document.onkeydown = function (e) {
+            if (e.keyCode === 37) rotateY -= 4;
+            else if (e.keyCode === 38) rotateX += 4;
+            else if (e.keyCode === 39) rotateY += 4;
+            else if (e.keyCode === 40) rotateX -= 4;
+
+            document.querySelector('.cube').style.transform =
+                'rotateY(' + rotateY + 'deg)' +
+                'rotateX(' + rotateX + 'deg)';
+        };
+        const cube = document.querySelector(".cube");
+        let isRotating = false;
+        let startX, startY;
+        let currentX, currentY;
+
+        cube.addEventListener("touchstart", function (event) {
+            isRotating = true;
+            startX = event.touches[0].clientX;
+            startY = event.touches[0].clientY;
+        });
+
+        cube.addEventListener("touchmove", function (event) {
+            if (isRotating) {
+                currentX = event.touches[0].clientX;
+                currentY = event.touches[0].clientY;
+                let deltaX = currentX - startX;
+                let deltaY = currentY - startY;
+                startX = currentX;
+                startY = currentY;
+                let rotateY = parseFloat(cube.style.transform.match(/rotateY\((-?\d+)deg\)/)[1]);
+                let rotateX = parseFloat(cube.style.transform.match(/rotateX\((-?\d+)deg\)/)[1]);
+                rotateY += deltaX;
+                rotateX -= deltaY;
+                cube.style.transform = `rotateY(${rotateY}deg) rotateX(${rotateX}deg)`;
             }
-        })();
-      </script>
+        });
+
+        cube.addEventListener("touchend", function () {
+            isRotating = false;
+        });
+    </script>
 </body>
+
 </html>
