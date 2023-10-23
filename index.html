@@ -95,8 +95,11 @@
     </div>
     <script>
 
-        let rotateY = 0;
-        let rotateX = 0;
+        let startX, startY;
+        let currentX, currentY;
+        let isRotating = false;
+        let rotateY = 45;
+        let rotateX = 45;
 
         document.onkeydown = function (e) {
             if (e.keyCode === 37) rotateY -= 4;
@@ -108,13 +111,10 @@
                 'rotateY(' + rotateY + 'deg)' +
                 'rotateX(' + rotateX + 'deg)';
         };
+
         const cube = document.querySelector(".cube");
-        let isRotating = false;
-        let startX, startY;
-        let currentX, currentY;
 
         cube.addEventListener("touchstart", function (event) {
-            isRotating = true;
             startX = event.touches[0].clientX;
             startY = event.touches[0].clientY;
         });
@@ -123,20 +123,26 @@
             if (isRotating) {
                 currentX = event.touches[0].clientX;
                 currentY = event.touches[0].clientY;
+
                 let deltaX = currentX - startX;
                 let deltaY = currentY - startY;
+
+                rotateY += deltaX / 2; 
+                rotateX -= deltaY / 2; 
+
+                cube.style.transform = `rotateY(${rotateY}deg) rotateX(${rotateX}deg)`;
+
                 startX = currentX;
                 startY = currentY;
-                let rotateY = parseFloat(cube.style.transform.match(/rotateY\((-?\d+)deg\)/)[1]);
-                let rotateX = parseFloat(cube.style.transform.match(/rotateX\((-?\d+)deg\)/)[1]);
-                rotateY += deltaX;
-                rotateX -= deltaY;
-                cube.style.transform = `rotateY(${rotateY}deg) rotateX(${rotateX}deg)`;
             }
         });
 
         cube.addEventListener("touchend", function () {
             isRotating = false;
+        });
+
+        cube.addEventListener("touchstart", function () {
+            isRotating = true;
         });
     </script>
 </body>
